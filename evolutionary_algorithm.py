@@ -1,13 +1,7 @@
 import numpy as np
 import random
 from typing import Optional, Callable, Any
-from stop_map import evol_stop_map
 
-
-#warunki stopu przez n iteracji średnia nie zmieniła się o jakąś tolerance
-#przez n iteracji nie było sukcesu
-#wrzucanie jako parametru funkcji metody deviation_adaptation.py np. metody 1/5
-#jupiter albo latex
 
 class EvolParams:
     def __init__(
@@ -37,10 +31,10 @@ class EvolParams:
         if tolerance:
             self.tolerance = tolerance
         else:
-            self.tolerance = 1e-6
+            self.tolerance = 1e-2
 
 
-class EvolResults:
+class OptimResults:
     def __init__(self, iterations: [int], values: [float], reason_for_stop: Optional[str] = None):
         self.iterations = iterations
         self.values = values
@@ -53,7 +47,7 @@ class EvolStopConditions: #evol_results jest podawane w conditions_not_met, poni
         self.evol_stop_map = evol_stop_map
         self.reason_for_stop = None
 
-    def conditions_not_meet(self, evol_results: EvolResults):
+    def conditions_not_meet(self, evol_results: OptimResults):
         for stop_name, stop in self.evol_stop_map.items():
             if stop(self.evol_params, evol_results):
                 self.reason_for_stop = stop_name
@@ -61,9 +55,9 @@ class EvolStopConditions: #evol_results jest podawane w conditions_not_met, poni
         return True
 
 
-def evolutionary_algorithm(f: Callable, x0: Any, deviation_adaptation_method, evol_params: EvolParams) -> EvolResults:
-    stop_conditions = EvolStopConditions(evol_params, evol_stop_map)
-    results = EvolResults([0], [f(x0).item()])
+def one_plus_one_algorithm(f: Callable, x0: Any, deviation_adaptation_method, stop_map, evol_params: EvolParams) -> OptimResults:
+    stop_conditions = EvolStopConditions(evol_params, stop_map)
+    results = OptimResults([0], [f(x0).item()])
     current_x = np.array(x0)
 
     i = 0

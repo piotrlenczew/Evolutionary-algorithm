@@ -1,7 +1,7 @@
-from evolutionary_algorithm import EvolParams, EvolResults
+from evolutionary_algorithm import EvolParams, OptimResults
 
 
-def one_fifth_method(evol_params: EvolParams, evol_results: EvolResults):
+def one_fifth_method(evol_params: EvolParams, evol_results: OptimResults):
     if evol_results.iterations[-1] % evol_params.deviation_change_frequency == 0 and len(evol_results.iterations) != 1:
         successes = 0
         for i in range(evol_params.deviation_change_frequency):

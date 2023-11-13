@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-from evolutionary_algorithm import EvolResults
+from evolutionary_algorithm import OptimResults
 
 
-def plot_convergence(data_list: [EvolResults], labels: [str], title: str):
+def plot_convergence(data_list: [OptimResults], labels: [str], title: str):
     plt.figure(figsize=(10, 6))
     graph_colors = ["b", "g", "r", "c", "m", "y"]
 

@@ -1,24 +1,40 @@
-from cec2017.functions import f1, f9, f2
-from evolutionary_algorithm import evolutionary_algorithm, EvolParams, EvolResults
+from cec2017.simple import f1, f9
+from evolutionary_algorithm import one_plus_one_algorithm, EvolParams, OptimResults
+from Gradient_descent import gradient_descent, GradParam
 from deviation_adaptation import one_fifth_method
 from Plotting import plot_convergence
+from stop_map import evol_stop_map
 import numpy as np
 
 
-def wrapper_1d_2d(x_1d):
-    return x_1d.reshape(1, -1)
-
-
-def F1(x):
-    return(f1(wrapper_1d_2d(x)))
-
-def F9(x):
-    return(f9(wrapper_1d_2d(x)))
-
+repetition_nr = 15
 x = np.array([100] * 10)
-result = evolutionary_algorithm(F9, x, one_fifth_method, EvolParams())
-print(result.values)
-print(result.iterations)
-print(result.reason_for_stop)
+functions = {
+    "f1": f1,
+    "f9": f9
+}
 
-plot_convergence([result], ["F9"], "Graph for F9 function")
+
+def avg_result(results: [OptimResults]):
+    zipped_values = zip(*[result.values for result in results]) # * passes multiple objects as individual one
+    averages = [sum(values) / len(values) for values in zipped_values]
+    return OptimResults(results[1].iterations, averages, None)
+
+
+for name, function in functions.items():
+    results = []
+    labels = []
+    print(f"Repetitions of minimizing {name} function")
+    for repetition in range(repetition_nr):
+        evol_result = one_plus_one_algorithm(function, x, one_fifth_method, evol_stop_map, EvolParams())
+        results.append(evol_result)
+        labels.append(f"Repetition nr {repetition+1}")
+        print(f"Reason for stop in repetition nr {repetition+1}: {evol_result.reason_for_stop}\nReached value: {evol_result.values[-1]}")
+    plot_convergence(results, labels, f"Graph for {name} function")
+    if all(len(result.values) == len(results[0].values) for result in results):
+        plot_convergence([avg_result(results)], [f"{name}"], f"Average for {name}")
+    else:
+        print(f"\nCannot calculate average for {name}. Different lengths of value lists.")
+    print("\n")
+    grad_results = gradient_descent(function, x, GradParam())
+    plot_convergence([grad_results], [f"grad {name}"], f"Graph for {name} function")
