@@ -1,5 +1,5 @@
-n = 200
-m = 100
+n = 250
+m = 200
 
 evol_stop_map = {
     "max iter": lambda evol_params, optim_results:
