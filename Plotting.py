@@ -21,7 +21,7 @@ def plot_convergence(data_list: [OptimResults], labels: [str], title: str):
     plt.xlabel("Iterations")
     plt.ylabel("Function Value")
     plt.title(title)
-    #plt.yscale("log")
+    # plt.yscale("log")
     plt.grid(True)
     plt.legend()
     plt.show()

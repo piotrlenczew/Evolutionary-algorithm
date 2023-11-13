@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from typing import Optional, Callable, Any
+from typing import Optional, Callable, Any, Dict
 
 
 class EvolParams:
@@ -35,14 +35,16 @@ class EvolParams:
 
 
 class OptimResults:
-    def __init__(self, iterations: [int], values: [float], reason_for_stop: Optional[str] = None):
+    def __init__(
+        self, iterations: [int], values: [float], reason_for_stop: Optional[str] = None
+    ):
         self.iterations = iterations
         self.values = values
         self.reason_for_stop = reason_for_stop
 
 
-class EvolStopConditions: #evol_results jest podawane w conditions_not_met, ponieważ musi być aktualne
-    def __init__(self, evol_params: EvolParams, evol_stop_map):
+class EvolStopConditions:  # evol_results as parameter of conditions_not_met, because it needs to be updated
+    def __init__(self, evol_params: EvolParams, evol_stop_map: Dict):
         self.evol_params = evol_params
         self.evol_stop_map = evol_stop_map
         self.reason_for_stop = None
@@ -55,7 +57,13 @@ class EvolStopConditions: #evol_results jest podawane w conditions_not_met, poni
         return True
 
 
-def one_plus_one_algorithm(f: Callable, x0: Any, deviation_adaptation_method, stop_map, evol_params: EvolParams) -> OptimResults:
+def one_plus_one_algorithm(
+    f: Callable,
+    x0: Any,
+    deviation_adaptation_method: Callable,
+    stop_map: Dict,
+    evol_params: EvolParams,
+) -> OptimResults:
     stop_conditions = EvolStopConditions(evol_params, stop_map)
     results = OptimResults([0], [f(x0).item()])
     current_x = np.array(x0)
